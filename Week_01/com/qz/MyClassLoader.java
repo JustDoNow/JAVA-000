@@ -1,7 +1,6 @@
 package com.qz;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 
 /**
@@ -12,23 +11,36 @@ import java.io.InputStream;
  */
 public class MyClassLoader extends ClassLoader {
 
+	/**
+	 * class文件后缀
+	 */
 	private static final String CLASS_FILE_SUFFIX = ".xlass";
 	private final String relativePath;
 	private final String classLoaderName;
 
-	public MyClassLoader(String packagePath, String classLoaderName) {
-		this.relativePath = packagePath;
+	public MyClassLoader(String relativePath, String classLoaderName) {
+		this.relativePath = relativePath;
 		this.classLoaderName = classLoaderName;
 	}
 
-	//用于寻找类文件
+	/**
+	 * 用于寻找类文件
+	 *
+	 * @param className class名
+	 * @return
+	 */
 	@Override
-	public Class findClass(String name) {
-		byte[] b = loadClassData(name);
-		return defineClass(name, b, 0, b.length);
+	public Class<?> findClass(String className) {
+		byte[] b = loadClassData(className);
+		return defineClass(className, b, 0, b.length);
 	}
 
-	//用于加载类文件
+	/**
+	 * 用于加载类文件
+	 *
+	 * @param className
+	 * @return
+	 */
 	private byte[] loadClassData(String className) {
 		String classPathName = relativePath + className + CLASS_FILE_SUFFIX;
 		InputStream in = null;
@@ -39,6 +51,7 @@ public class MyClassLoader extends ClassLoader {
 			out = new ByteArrayOutputStream();
 			int i = 0;
 			while ((i = in.read()) != -1) {
+				// 特殊处理
 				i = 255 -i;
 				out.write(i);
 			}
@@ -46,15 +59,22 @@ public class MyClassLoader extends ClassLoader {
 			e.printStackTrace();
 		} finally {
 			try {
-				out.close();
-				in.close();
-			} catch (IOException e) {
+				if (out != null) {
+					out.close();
+				}
+				if (in != null) {
+					in.close();
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		return out.toByteArray();
 
+		if (out != null) {
+			return out.toByteArray();
+		}
 
+		return new byte[0];
 	}
 
 
