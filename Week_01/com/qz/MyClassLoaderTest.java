@@ -11,7 +11,8 @@ import java.lang.reflect.Method;
 public class MyClassLoaderTest {
 
 	public static void main(String[] args) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException, InstantiationException {
-		MyClassLoader myClassLoader = new MyClassLoader("/Users/qizhi/GitHub/JAVA-000/Week_01/com/qz/", "myClassLoader");
+
+		MyClassLoader myClassLoader = new MyClassLoader("com/qz/", "myClassLoader");
 		final Class helloClass = myClassLoader.findClass("Hello");
 		final Object helloObject = helloClass.newInstance();
 		final Method helloMethod = helloClass.getMethod("hello", null);

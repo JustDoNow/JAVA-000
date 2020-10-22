@@ -1,8 +1,6 @@
 package com.qz;
 
 import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -14,11 +12,12 @@ import java.io.InputStream;
  */
 public class MyClassLoader extends ClassLoader {
 
-	private String path;
-	private String classLoaderName;
+	private static final String CLASS_FILE_SUFFIX = ".xlass";
+	private final String relativePath;
+	private final String classLoaderName;
 
-	public MyClassLoader(String path, String classLoaderName) {
-		this.path = path;
+	public MyClassLoader(String packagePath, String classLoaderName) {
+		this.relativePath = packagePath;
 		this.classLoaderName = classLoaderName;
 	}
 
@@ -30,13 +29,13 @@ public class MyClassLoader extends ClassLoader {
 	}
 
 	//用于加载类文件
-	private byte[] loadClassData(String name) {
-		name = path + name + ".xlass";
+	private byte[] loadClassData(String className) {
+		String classPathName = relativePath + className + CLASS_FILE_SUFFIX;
 		InputStream in = null;
 		ByteArrayOutputStream out = null;
 
 		try {
-			in = new FileInputStream(new File(name));
+			in = ClassLoader.getSystemResourceAsStream(classPathName);
 			out = new ByteArrayOutputStream();
 			int i = 0;
 			while ((i = in.read()) != -1) {
